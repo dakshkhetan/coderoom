@@ -37,6 +37,33 @@
   background-color: #757575;
 }
 
+.side-drawer .divider-thick {
+  margin: 18px auto;
+  height: 2px;
+  width: 90%;
+  background-color: #423939cc;
+}
+
+.side-drawer .creator-info {
+  display: flex;
+  align-items: center;
+  margin: 3px 0;
+  padding: 0 40px;
+}
+
+.side-drawer .creator-info img {
+  height: 2.3rem;
+  width: 2.3rem;
+  border-radius: 50%;
+  border: 1px solid #222;
+}
+
+.side-drawer .creator-info span {
+  color: #000000;
+  font-size: 1rem;
+  margin-left: 10px;
+}
+
 .side-drawer ul {
   margin: 0;
   padding: 0 40px;

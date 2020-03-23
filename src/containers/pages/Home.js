@@ -12,7 +12,7 @@ export default class HomePage extends React.Component {
 
   constructor(props) {
     super(props);
-    
+
     this.handleLogout = this.handleLogout.bind(this);
 
     if(localStorage.getItem(sessionID)){
@@ -42,13 +42,17 @@ export default class HomePage extends React.Component {
 
   // when new session is created ('Share Code' button is clicked)
   onNewGround = () => {
+
     var user = firebaseAuth().currentUser;
+
     database()
     .ref("code-sessions/" + this.state.key)
     .set({
       content: "<h1> I ♥ Coding! </h1>",
-      createdon: Date()
+      createdon: Date(),
+      readOnly: false,  // by default 'false'
     });
+
     // adding details of the user to the database
     database()
     .ref("code-sessions/" + this.state.key + "/creator")
@@ -58,7 +62,9 @@ export default class HomePage extends React.Component {
         user_email: user.email,
         user_photo: user.photoURL
     });
+
     this.props.history.push("/home/" + this.state.key);
+
   };
 
   // sign-out functionality
@@ -79,9 +85,6 @@ export default class HomePage extends React.Component {
         />
         <div className="homepage">
           <p className="title">
-            {/* <span className="highlight">Coderoom</span> | <span className="highlight">Coding Ninjas</span> */}
-            {/* <br /> */}
-            {/* <br /> */}
             <br />
             Share Code within <span className="highlight">Realtime</span>.
             <br />

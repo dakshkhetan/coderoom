@@ -1,11 +1,9 @@
 import React from "react";
-import random from "random-key";
 import logo from '../../images/CNLOGO.svg';
 import { Helmet } from 'react-helmet';
 import { FontIcon, RaisedButton } from "material-ui";
 import { loginWithGoogle } from "../../helpers/auth";
 import { firebaseAuth } from "../../config/firebase-config";
-import { database } from "firebase/app";
 
 const firebaseAuthKey = "firebaseAuthInProgress";
 const appTokenKey = "appToken";
@@ -19,7 +17,6 @@ export default class Login extends React.Component {
 
         this.state = {
             splashScreen: false,
-            key: random.generate(3), // for storing connected-users
         };
 
         this.handleGoogleLogin = this.handleGoogleLogin.bind(this);
@@ -61,52 +58,9 @@ export default class Login extends React.Component {
         firebaseAuth().onAuthStateChanged(user => {
             try {
                 if (user) {
-
-                    if (localStorage.getItem(sessionID)) {
-                        const session_id = localStorage.getItem(sessionID);
-
-                        var newUser;
-
-                        // checking if user already present in database
-                        database()
-                        .ref(`code-sessions/${session_id}/users-connected`)
-                        .on("value", function(snapshot){
-                            snapshot.forEach(function(childSnapshot){
-                                var userData = childSnapshot.val();
-                                if(userData.user_id === user.uid){
-                                    newUser = false;
-                                    // console.log("User already connected previously.");
-                                }
-                            });
-                            if(newUser !== false){
-                                newUser = true;
-                            }
-                        })
-
-                        function firebaseDelay(key) {
-
-                            // adding new user details in database
-                            if(newUser === true){
-                                // console.log("User connected to the session.");
-                                database()
-                                .ref(`code-sessions/${session_id}/users-connected/user-` + key)
-                                .set({
-                                    user_id: user.uid,
-                                    user_name: user.displayName,
-                                    user_email: user.email,
-                                    user_photo: user.photoURL
-                                });
-                            }
-
-                        }
-
-                        // wait 4 seconds to complete fetching and storing data in database
-                        setTimeout(firebaseDelay, 4000, this.state.key);
-
-                    }
                     
                     // console.log("User signed in: ", JSON.stringify(user));
-                    console.log("\n User signed in:", user);
+                    console.log("User signed in:", user);
 
                     localStorage.removeItem(firebaseAuthKey);
 
@@ -127,7 +81,7 @@ export default class Login extends React.Component {
 
                 }
             } catch(error) {
-                console.log("Error in authentication.");
+                console.log("Error in authentication:", error);
             }
         });
     }
