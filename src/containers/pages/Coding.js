@@ -188,6 +188,21 @@ export default class CodingPage extends React.Component {
             console.log("\n");
           });
 
+          // making the users-editing-state button dynamic
+          database()
+          .ref(`code-sessions/${params.sessionid}`)
+          .on('value', snapshot => {
+            // console.log("readOnly changed!");
+            if(this.userEditingToggleBtn !== null){
+              let readOnlyState = snapshot.val().readOnly;
+              if(readOnlyState){
+                this.userEditingToggleBtn.innerHTML = "Editing: Disabled";
+              } else {
+                this.userEditingToggleBtn.innerHTML = "Editing: Enabled";
+              }
+            }
+          });
+
         } else {
           console.log("Cannot fetch currently signed-in user!");
         }
@@ -315,6 +330,22 @@ export default class CodingPage extends React.Component {
         </button>
     }
 
+    // this button is only displayed to the users-connected (not the creator)
+    let userEditingToggle;
+    if (!this.state.isCreator) {
+      userEditingToggle = 
+        <button
+          ref={button => {
+            this.userEditingToggleBtn = button;
+          }}
+          className="btn-coding margin-l-10" 
+          onClick={null}>
+            {this.state.readOnly 
+            ? 'Editing: Disabled' 
+            : 'Editing: Enabled'}
+        </button>
+    }
+
     return (
       <React.Fragment>
 
@@ -326,6 +357,7 @@ export default class CodingPage extends React.Component {
                 ? `Created On: ${this.state.createdon}`
                 : ""}
               { readOnlyToggle }
+              { userEditingToggle }
               <button className="btn-coding margin-l-10" onClick={this.handleLogout}>
                 Sign Out
               </button>
