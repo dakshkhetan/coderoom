@@ -338,7 +338,7 @@ export default class CodingPage extends React.Component {
           ref={button => {
             this.userEditingToggleBtn = button;
           }}
-          className="btn-coding margin-l-10" 
+          className="btn-user-editing margin-l-10" 
           onClick={null}>
             {this.state.readOnly 
             ? 'Editing: Disabled' 

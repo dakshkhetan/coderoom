@@ -134,6 +134,32 @@ p {
   outline: none;
 }
 
+.btn-user-editing {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid transparent;
+  line-height: 36px;
+  padding: 0 10px;
+  font-size: 14px;
+  border-radius: 58px;
+  text-decoration: none;
+  height: 36px;
+  background: transparent;
+  color: #e4e4e4;
+  border-color: #5ce198;
+  cursor: default;
+  -webkit-transition: all 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+  -o-transition: all 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+  transition: all 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.btn-user-editing:focus {
+  outline: none;
+}
+
 /**** Google Login Page ****/
 
 .header-loginPage {
