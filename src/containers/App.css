@@ -232,6 +232,11 @@ p {
 
 /**** Extra ****/
 
+.toggle-btn {
+  vertical-align: bottom;
+  font-size: 1.4rem;
+}
+
 .spotlight {
   position: absolute;
   height: 100%;

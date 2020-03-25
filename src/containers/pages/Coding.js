@@ -322,7 +322,7 @@ export default class CodingPage extends React.Component {
     if (this.state.isCreator) {
       readOnlyToggle = 
         <button 
-          className="btn-coding margin-l-10" 
+          className="btn-coding margin-l-10 toggle-btn" 
           onClick={this.toggleReadOnly}>
             {this.state.readOnly 
             ? <FontAwesomeIcon icon={faToggleOn} /> 
