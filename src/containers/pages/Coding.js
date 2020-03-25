@@ -67,6 +67,9 @@ export default class CodingPage extends React.Component {
       .then(snapshot => {
         var readOnly = snapshot.val().readOnly;
         this.setState({ readOnly: readOnly });
+      })
+      .catch(e => {
+        // no session found corresponding to "sessionid" passed in the params
       });
 
       this.handleLogout = this.handleLogout.bind(this);
@@ -106,7 +109,15 @@ export default class CodingPage extends React.Component {
             creatorInfo.user_name = creatorData.user_name;
             creatorInfo.user_photo = creatorData.user_photo;
             // console.log(creatorData);
+          })
+          .catch(e => {
+            // no session found corresponding to "sessionid" passed in the params
           });
+
+          if (creator_uid === undefined ){
+            console.log("No Session Found!");
+            return;
+          }
 
           // do not add user details to 'users-connected'
           // if that user is the creator of session
@@ -132,6 +143,9 @@ export default class CodingPage extends React.Component {
                 if(newUser !== false){
                   newUser = true;
                 }
+              })
+              .catch(e => {
+                console.log(e);
               });
 
               // adding new user details in database
@@ -156,9 +170,9 @@ export default class CodingPage extends React.Component {
           // displaying users-connected from database
           database()
           .ref(`code-sessions/${params.sessionid}/users-connected`)
-          .once("value")
-          .then(snapshot => {
+          .on('value', snapshot => {
             console.log("\nConnected users: ");
+            usersList.splice(0, usersList.length);
             var i = 0;
             snapshot.forEach(function(childSnapshot){
               var userData = childSnapshot.val();
@@ -279,7 +293,7 @@ export default class CodingPage extends React.Component {
     }, () => this.codemirror.focus());
     // updating readOnly in database
     this.codeRef.child("readOnly").set(!this.state.readOnly);
-  }
+  };
 
   render() {
 
@@ -322,7 +336,7 @@ export default class CodingPage extends React.Component {
           }
         />
 
-        <SideDrawer show={this.state.sideDrawerOpen} />
+        <SideDrawer show={this.state.sideDrawerOpen} session_id={this.props.match.params.sessionid} />
         { backdrop }
         
         <div className="coding-page">
