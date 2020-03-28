@@ -95,10 +95,10 @@ export default class HomePage extends React.Component {
             Simple Realtime Code Sharing Editor App.
           </p>
           <div>
-            <button className="btn" onClick={this.onNewGround}>
+            <button className="btn-home" onClick={this.onNewGround}>
               Share Code
             </button>
-            <button className="btn margin-l-15" onClick={this.handleLogout}>
+            <button className="btn-home margin-l-15" onClick={this.handleLogout}>
               &nbsp;&nbsp;Sign Out&nbsp;&nbsp;
             </button>
           </div>
