@@ -1,0 +1,14 @@
+.popup-heading {
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.popup-heading a {
+    margin-left: 8px;
+    font-size: 1.7rem;
+}
+
+.popup-heading a:hover {
+    color: red;
+    text-decoration: none;
+}
