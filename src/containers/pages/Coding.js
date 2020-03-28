@@ -4,13 +4,14 @@ import CodeMirror from "react-codemirror";
 import Header from "../../components/Header/Header";
 import SideDrawer from '../../components/SideDrawer/SideDrawer';
 import Backdrop from '../../components/Backdrop/Backdrop';
+import CloneReceivePopUp from '../../components/ClonePopup/CloneReceivePopUp';
+import CloneSendPopup from '../../components/ClonePopup/CloneSendPopup';
 import { database } from "firebase/app";
 import { firebaseAuth } from "../../config/firebase-config";
 import { logout } from "../../helpers/auth";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars } from '@fortawesome/free-solid-svg-icons';
-import { faToggleOn } from '@fortawesome/free-solid-svg-icons';
-import { faToggleOff } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faFileExport } from '@fortawesome/free-solid-svg-icons';
+import { faToggleOn, faToggleOff } from '@fortawesome/free-solid-svg-icons';
 
 import "codemirror/lib/codemirror";
 import "codemirror/lib/codemirror.css";
@@ -31,6 +32,8 @@ const appTokenKey = "appToken";
 const sessionID = "sessionID";
 const usersList = [];
 const creatorInfo = {};
+const newCloneSessionID = {};
+const clonesCreated = {};
 
 export default class CodingPage extends React.Component {
 
@@ -50,9 +53,11 @@ export default class CodingPage extends React.Component {
       // setting initial state
       this.state = {
           key: random.generate(3), // for storing connected-users
+          cloneTrigger: random.generate(3),   // for triggering clone feature
           readOnly: false,
           isCreator: false,
           sideDrawerOpen: false,
+          clonePopupShow: false,
           code: "Loading...",
           cursorPosition: {
             line: 0,
@@ -79,6 +84,7 @@ export default class CodingPage extends React.Component {
   // setting initial state
   state = {
     sideDrawerOpen: false,
+    clonePopupShow: false,
     code: "Loading...",
     cursorPosition: {
       line: 0,
@@ -167,10 +173,19 @@ export default class CodingPage extends React.Component {
             this.setState({ isCreator: true });
           }
 
+          // setting states of 'cloneTrigger' & 'isFirstLoad' in database
+          database()
+          .ref(`code-sessions/${session_id}/cloneHelper`)
+          .update({
+            cloneTrigger: this.state.cloneTrigger,
+            isFirstLoad: true,
+          });
+
           // displaying users-connected from database
           database()
           .ref(`code-sessions/${params.sessionid}/users-connected`)
           .on('value', snapshot => {
+            clonesCreated.numOfClonesCreated = snapshot.numChildren();
             console.log("\nConnected users: ");
             usersList.splice(0, usersList.length);
             var i = 0;
@@ -201,6 +216,156 @@ export default class CodingPage extends React.Component {
                 this.userEditingToggleBtn.innerHTML = "Editing: Enabled";
               }
             }
+          });
+
+          // 'received-clone' pop-up handler
+          if(!this.state.isCreator){
+            // fetching and then setting state of 'clonePopupShow' from database
+            database()
+            .ref(`code-sessions/${params.sessionid}/cloneHelper/clonePopupShow`)
+            .on('value', snapshot => {
+              // console.log("'clonePopupShow' state changed!");
+              let clonePopupShowState = snapshot.val();
+              if(clonePopupShowState){
+                this.setState({
+                  clonePopupShow: true,
+                });
+              }
+
+              // setting state of 'clonePopupShow' to false in database
+              // after delay of 500 milliseconds
+              function clonePopupShowStateDelay(){
+                database()
+                .ref(`code-sessions/${params.sessionid}/cloneHelper/clonePopupShow`)
+                .set(false);
+              }
+              setTimeout(clonePopupShowStateDelay, 500);
+
+            });
+          }
+
+          var date;
+
+          // 'send-clone' button functionality
+          // executes when 'send-clone' button is clicked
+          // i.e. when 'cloneTrigger' key is changed in database
+          database()
+          .ref(`code-sessions/${params.sessionid}/cloneHelper/cloneTrigger`)
+          .on('value', snapshot => {
+
+            database()
+            .ref(`code-sessions/${session_id}/cloneHelper`)
+            .once("value")
+            .then(snapshot => {
+              let isFirstLoad = snapshot.val().isFirstLoad;
+
+              // does not execute on first load of page
+              if(isFirstLoad === false){
+
+                // console.log("sendCloneButton clicked!");
+  
+                date = Date();
+  
+                // fetching existing code in this session ID to be cloned
+                var existingContent;
+                database()
+                .ref(`code-sessions/${session_id}`)
+                .once("value")
+                .then(snapshot => {
+                  existingContent = snapshot.val().content;
+                })
+                .catch(e => {
+                  console.log(e);
+                });
+  
+                // only creator can create new sessions with cloned code
+                if(this.state.isCreator){
+  
+                  database()
+                  .ref(`code-sessions/${session_id}/users-connected`)
+                  .once("value")
+                  .then(snapshot => {
+                    // console.log("New clone being created.");
+  
+                    snapshot.forEach(function(childSnapshot){
+                      
+                      // console.log(existingContent);
+                      let newSessionKey = random.generate(5);
+                      let userData = childSnapshot.val();
+  
+                      // creating new session with cloned code
+                      database()
+                      .ref("code-sessions/" + newSessionKey)
+                      .set({
+                        cloneSentBy: creator_uid,
+                        content: existingContent,
+                        createdon: date,
+                        readOnly: false,
+                      });
+  
+                      // adding details of the user as creator to the database
+                      database()
+                      .ref("code-sessions/" + newSessionKey + "/creator")
+                      .set({
+                          user_id: userData.user_id,
+                          user_name: userData.user_name,
+                          user_email: userData.user_email,
+                          user_photo: userData.user_photo
+                      });
+                      
+                    });
+  
+                    // setting 'numOfClonesCreated' to be passed in props of 'CloneSendPopup'
+                    clonesCreated.numOfClonesCreated = snapshot.numChildren();
+                    console.log(`Created ${snapshot.numChildren()} clone(s)`);
+  
+                  })
+                  .catch(e => {
+                    console.log(e);
+                  });
+                }
+  
+                // finding new session id with cloned content
+                // for currently signed-in user
+                // and storing that session id in 'newCloneSessionID' object
+                if(!this.state.isCreator){
+  
+                  // console.log(date);
+                  // comparing date of session created exluding the 'seconds' time
+                  var dateCompressed = date.substring(0, 21);
+  
+                  database()
+                  .ref(`code-sessions/`)
+                  .on('value', snapshot => {
+                    snapshot.forEach(function(childSnapshot){
+  
+                      let cloneSentBy = childSnapshot.child("cloneSentBy").val();
+                      let user_id = childSnapshot.child("creator").child("user_id").val();
+                      let content = childSnapshot.child("content").val();
+                      let createdOn = childSnapshot.child("createdon").val();
+                      let createdOnCompressed = createdOn.substring(0, 21);
+
+                      // Comparing: content (code), user id (uid), 
+                      //    cloneSentBy (creator id), date (createOn)
+                      if(cloneSentBy === creator_uid 
+                        && user_id === user.uid
+                        && content === existingContent
+                        && createdOnCompressed === dateCompressed) {
+                        
+                        let cloneSessionID = childSnapshot.key;
+                        newCloneSessionID.session_id = cloneSessionID;
+                        // console.log(`Clone found at session ID: ${cloneSessionID} \n`);
+                        return true;
+                      }
+                    });
+  
+                  })
+                }
+  
+              }
+
+            })
+
           });
 
         } else {
@@ -310,6 +475,22 @@ export default class CodingPage extends React.Component {
     this.codeRef.child("readOnly").set(!this.state.readOnly);
   };
 
+  // 'send-clone' button handler
+  sendCloneHandler = () => {
+    let newCloneTrigger = random.generate(3);
+    this.setState({
+      clonePopupShow: true,
+      cloneTrigger: newCloneTrigger,
+    });
+    // setting 'isFirstLoad' to false in database
+    this.codeRef.child("cloneHelper").child("isFirstLoad").set(false);
+    // setting 'clonePopupShow' state to true in database
+    this.codeRef.child("cloneHelper").child("clonePopupShow").set(true);
+    // updating 'cloneTrigger' value and 'clonePopupShow' state in database
+    // indicating 'send-clone' button is clicked
+    this.codeRef.child("cloneHelper").child("cloneTrigger").set(newCloneTrigger);
+  };
+
   render() {
 
     let backdrop;
@@ -330,6 +511,17 @@ export default class CodingPage extends React.Component {
         </button>
     }
 
+    // 'send-clone' button is only displayed when current user is the creator of session
+    let sendCloneButton;
+    if (this.state.isCreator) {
+      sendCloneButton = 
+        <button 
+          className="btn-coding margin-l-10 clone-btn" 
+          onClick={this.sendCloneHandler}>
+            <FontAwesomeIcon icon={faFileExport} />
+        </button>
+    }
+
     // this button is only displayed to the users-connected (not the creator)
     let userEditingToggle;
     if (!this.state.isCreator) {
@@ -346,6 +538,30 @@ export default class CodingPage extends React.Component {
         </button>
     }
 
+    // to close the send/receive clone popup
+    let clonePopupClose = () => {
+      this.setState({clonePopupShow: false});
+    }
+
+    let clonePopUp;
+    if (!this.state.isCreator) {
+      // render 'clone-received' pop-up component
+      clonePopUp = 
+        <CloneReceivePopUp 
+          show={this.state.clonePopupShow}
+          onHide={clonePopupClose} 
+        />
+    } else {
+      // render 'clone-sent' pop-up component
+      clonePopUp = 
+        <CloneSendPopup 
+          session_id={this.props.match.params.sessionid}
+          num={clonesCreated.numOfClonesCreated}
+          show={this.state.clonePopupShow}
+          onHide={clonePopupClose} 
+        />
+    }
+
     return (
       <React.Fragment>
 
@@ -356,6 +572,7 @@ export default class CodingPage extends React.Component {
               {this.state.createdon
                 ? `Created On: ${this.state.createdon}`
                 : ""}
+              { sendCloneButton }
               { readOnlyToggle }
               { userEditingToggle }
               <button className="btn-coding margin-l-10" onClick={this.handleLogout}>
@@ -367,6 +584,8 @@ export default class CodingPage extends React.Component {
             </div>
           }
         />
+
+        { clonePopUp }
 
         <SideDrawer show={this.state.sideDrawerOpen} session_id={this.props.match.params.sessionid} />
         { backdrop }
@@ -405,3 +624,6 @@ export {usersList};
 
 // exporting creator info object
 export {creatorInfo};
+
+// exporting new session ID with cloned code to each user-connected
+export {newCloneSessionID};
