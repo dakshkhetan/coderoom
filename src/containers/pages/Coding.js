@@ -187,6 +187,8 @@ export default class CodingPage extends React.Component {
 
         } else {
           console.log("Cannot fetch currently signed-in user!");
+          console.log("Signing out... please login again.");
+          this.handleLogout();
         }
       } catch(error) {
         console.log("Error in authentication:", error);
