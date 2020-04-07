@@ -237,6 +237,11 @@ p {
 
 /**** Extra ****/
 
+.mode-dropdown {
+  height: 30px;
+  font-size: 13px;
+}
+
 .toggle-btn {
   vertical-align: bottom;
   font-size: 1.4rem;
