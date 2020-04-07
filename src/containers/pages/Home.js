@@ -44,7 +44,8 @@ export default class HomePage extends React.Component {
   onNewGround = () => {
 
     // to fetch currently signed-in user
-    firebaseAuth().onAuthStateChanged((user) => {
+    firebaseAuth().onAuthStateChanged(user => {
+    // firebaseAuth().onIdTokenChanged(user => {
       try {
         if (user) {
 
@@ -70,6 +71,8 @@ export default class HomePage extends React.Component {
 
         } else {
           console.log("Cannot fetch currently signed-in user!");
+          console.log("Signing out... please login again.");
+          this.handleLogout();
         }
       } catch(error) {
         console.log("Error in authentication:", error);
