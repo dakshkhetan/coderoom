@@ -43,27 +43,38 @@ export default class HomePage extends React.Component {
   // when new session is created ('Share Code' button is clicked)
   onNewGround = () => {
 
-    var user = firebaseAuth().currentUser;
+    // to fetch currently signed-in user
+    firebaseAuth().onAuthStateChanged((user) => {
+      try {
+        if (user) {
 
-    database()
-    .ref("code-sessions/" + this.state.key)
-    .set({
-      content: "<h1> I ♥ Coding! </h1>",
-      createdon: Date(),
-      readOnly: false,  // by default 'false'
+          database()
+          .ref("code-sessions/" + this.state.key)
+          .set({
+            content: "<h1> I ♥ Coding! </h1>",
+            createdon: Date(),
+            readOnly: false,  // by default 'false'
+          });
+
+          // adding details of the user to the database
+          database()
+          .ref("code-sessions/" + this.state.key + "/creator")
+          .set({
+              user_id: user.uid,
+              user_name: user.displayName,
+              user_email: user.email,
+              user_photo: user.photoURL
+          });
+
+          this.props.history.push("/home/" + this.state.key);
+
+        } else {
+          console.log("Cannot fetch currently signed-in user!");
+        }
+      } catch(error) {
+        console.log("Error in authentication:", error);
+      }
     });
-
-    // adding details of the user to the database
-    database()
-    .ref("code-sessions/" + this.state.key + "/creator")
-    .set({
-        user_id: user.uid,
-        user_name: user.displayName,
-        user_email: user.email,
-        user_photo: user.photoURL
-    });
-
-    this.props.history.push("/home/" + this.state.key);
 
   };
 
