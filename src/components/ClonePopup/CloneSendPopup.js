@@ -23,7 +23,7 @@ export default class CloneSendPopup extends Component {
 
                 <Modal.Body>
                     <div className="popup-heading" >
-                            Created {this.props.num} clone(s).
+                        Created {this.props.num} clone(s).
                     </div>
                 </Modal.Body>
                 

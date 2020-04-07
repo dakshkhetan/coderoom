@@ -1,45 +1,35 @@
 import React, { Component } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './CloneReceivePopup.css';
-import { creatorInfo } from '../../containers/pages/Coding';
-import { newCloneSessionID } from '../SideDrawer/SideDrawer';
+import './CloneSendPopup.css';
 
-export default class CloneReceivePopup extends Component {
+export default class CloneSendPopupSingle extends Component {    
 
     render(){
-
-        var session_id = newCloneSessionID.session_id;
 
         return (
             <Modal
             {...this.props}
-            size="lg"
+            size="sm"
             aria-labelledby="contained-modal-title-vcenter"
             centered
             >
 
                 <Modal.Header closeButton>
                     <Modal.Title id="contained-modal-title-vcenter">
-                        Copy received from {creatorInfo.user_name}!
+                        Clone sent!
                     </Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body>
-                    <div className="popup-heading">
-                        Your key for the cloned session is :
-                        <a href={`/home/${session_id}`} target='_blank' rel='noopener noreferrer'>
-                            {session_id}
-                        </a>
+                    <div className="popup-heading" >
+                        Created 1 clone.
                     </div>
                 </Modal.Body>
                 
                 <Modal.Footer>
                     <Button variant="danger" onClick={this.props.onHide}>
                         Close
-                    </Button>
-                    <Button variant="dark" href={`/home/${session_id}`} target='_blank'>
-                        Open
                     </Button>
                 </Modal.Footer>
 
