@@ -91,6 +91,33 @@ export default class sideDrawer extends React.Component {
             isFirstLoad: true,
           });
 
+          // for updating user's presence status
+          database()
+          .ref(`code-sessions/${session_id}/users-connected`)
+          .on('value', snapshot => {
+            snapshot.forEach(function(childSnapshot){
+              var userData = childSnapshot.val();
+              if(user.uid === userData.user_id){
+                let userKey = childSnapshot.key;
+                let userRef = database().ref(`code-sessions/${session_id}/users-connected/${userKey}/user_status`)
+                // monitor connection state on browser tab
+                database().ref(".info/connected")
+                .on("value", snapshot => {
+                  let userStatus = snapshot.val();
+                  if(userStatus) {
+                    // set user's online status
+                    userRef.onDisconnect().set('offline');
+                    userRef.set('online');
+                    // console.log("User: ONLINE");
+                  } else {
+                    // client has lost network
+                    // console.log("User: OFFLINE");
+                  }
+                });
+              }
+            });
+          });
+
           // displaying users-connected from database
           database()
           .ref(`code-sessions/${session_id}/users-connected`)
@@ -143,9 +170,24 @@ export default class sideDrawer extends React.Component {
                 </span>
               }
 
+              let userStatus = userData.user_status;
+              let userPresenceStatus;
+              if(userStatus === "online"){
+                // user is online
+                // console.log(userData.user_name + " is ONLINE.");
+                userPresenceStatus = 
+                <span className="green-dot"/>
+              } else if (userStatus === "offline"){
+                // user is offline
+                // console.log(userData.user_name + " is OFFLINE.");
+                userPresenceStatus = 
+                <span className="red-dot"/>
+              }
+
               usersList.push(
                 <li key={i}>
                   <span className="user-details-list">
+                    { userPresenceStatus }
                     <img src={userData.user_photo} alt="Avatar" />
                     { displayUserNameCloneLink }
                   </span>
