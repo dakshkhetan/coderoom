@@ -44,6 +44,15 @@
   height: calc(100vh - 80px);
 }
 
+.firepad {
+  height: calc(100vh - 80px);
+}
+
+.powered-by-firepad {
+  display: none;
+  z-index: 0;
+}
+
 .codingpage {
   height: calc(100vh - 80px);
 }
