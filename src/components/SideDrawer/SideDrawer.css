@@ -59,7 +59,7 @@
   border: 1px solid #222;
 }
 
-.side-drawer .creator-info span {
+.side-drawer .creator-info .creator-name {
   color: #000000;
   font-size: 1rem;
   margin-left: 10px;
@@ -169,6 +169,26 @@
   width: 10px;
   display: flex;
   margin: auto;
+  margin-right: 10px;
+  margin-left: -20px;
+  border-radius: 50%;
+}
+
+.green-dot-creator {
+  background-color: #41d641;
+  height: 10px;
+  width: 10px;
+  display: flex;
+  margin-right: 10px;
+  margin-left: -20px;
+  border-radius: 50%;
+}
+
+.red-dot-creator {
+  background-color: #F44336;
+  height: 10px;
+  width: 10px;
+  display: flex;
   margin-right: 10px;
   margin-left: -20px;
   border-radius: 50%;
