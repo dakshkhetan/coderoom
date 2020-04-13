@@ -75,6 +75,44 @@ export default class sideDrawer extends React.Component {
             this.setState({ isCreator: true });
           }
 
+          // for updating creator's presence status
+          database()
+          .ref(`code-sessions/${session_id}/creator`)
+          .on('value', snapshot => {
+            let creatorData = snapshot.val();
+            if(user.uid === creatorData.user_id){
+              let creatorRef = database().ref(`code-sessions/${session_id}/creator/user_status`);
+              // monitor connection state on browser tab
+              database().ref(".info/connected")
+              .on("value", snapshot => {
+                let userStatus = snapshot.val();
+                if(userStatus) {
+                  // set session creator's online status
+                  creatorRef.onDisconnect().set('offline');
+                  creatorRef.set('online');
+                } else {
+                  // session creator has lost network
+                }
+              });
+            }
+          });
+
+          // for updating creator's presence status
+          database()
+          .ref(`code-sessions/${session_id}/creator/user_status`)
+          .on('value', snapshot => {
+            let creatorStatus = snapshot.val();
+            if(creatorStatus === "online"){
+              // session creator is online
+              creatorInfo.user_status = "online";
+            } else if (creatorStatus === "offline"){
+              // session creator is offline
+              creatorInfo.user_status = "offline";
+            }
+            // in order to re-render the sidebar component everytime there's a change
+            this.setState(this.state);
+          });
+
           // setting states of 'cloneTrigger' & 'isFirstLoad' in database
           database()
           .ref(`code-sessions/${session_id}/cloneHelper`)
@@ -96,10 +134,10 @@ export default class sideDrawer extends React.Component {
           .ref(`code-sessions/${session_id}/users-connected`)
           .on('value', snapshot => {
             snapshot.forEach(function(childSnapshot){
-              var userData = childSnapshot.val();
+              let userData = childSnapshot.val();
               if(user.uid === userData.user_id){
                 let userKey = childSnapshot.key;
-                let userRef = database().ref(`code-sessions/${session_id}/users-connected/${userKey}/user_status`)
+                let userRef = database().ref(`code-sessions/${session_id}/users-connected/${userKey}/user_status`);
                 // monitor connection state on browser tab
                 database().ref(".info/connected")
                 .on("value", snapshot => {
@@ -108,12 +146,11 @@ export default class sideDrawer extends React.Component {
                     // set user's online status
                     userRef.onDisconnect().set('offline');
                     userRef.set('online');
-                    // console.log("User: ONLINE");
                   } else {
-                    // client has lost network
-                    // console.log("User: OFFLINE");
+                    // user has lost network
                   }
                 });
+                return true;
               }
             });
           });
@@ -198,6 +235,10 @@ export default class sideDrawer extends React.Component {
 
             });
             console.log("\n");
+
+            // in order to re-render the sidebar component everytime there's a change
+            this.setState(this.state);
+
           });
 
           // 'received-clone' pop-up handler
@@ -683,6 +724,18 @@ export default class sideDrawer extends React.Component {
           onHide={clonePopupClose} 
         />
     }
+
+    let creatorStatus = creatorInfo.user_status;
+    let creatorPresenceStatus;
+    if(creatorStatus === "online"){
+      // user is online
+      creatorPresenceStatus = 
+      <span className="green-dot-creator"/>
+    } else if (creatorStatus === "offline"){
+      // user is offline
+      creatorPresenceStatus = 
+      <span className="red-dot-creator"/>
+    }
     
     let drawerClasses = 'side-drawer';
     if (this.props.show) {
@@ -696,8 +749,9 @@ export default class sideDrawer extends React.Component {
         </span>
         <div className="divider" />
         <div className="creator-info">
+          { creatorPresenceStatus }
           <img src={creatorInfo.user_photo} alt="Avatar" />
-          <span>{creatorInfo.user_name}</span>
+          <span className="creator-name">{creatorInfo.user_name}</span>
         </div>
         <div className="divider-thick" />
 
