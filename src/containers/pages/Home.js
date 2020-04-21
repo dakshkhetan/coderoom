@@ -81,6 +81,29 @@ export default class HomePage extends React.Component {
 
   };
 
+  // when 'Dashboard' button is clicked
+  goToDashboard = () => {
+
+    // to fetch currently signed-in user
+    firebaseAuth().onAuthStateChanged(user => {
+    // firebaseAuth().onIdTokenChanged(user => {
+      try {
+        if (user) {
+
+          this.props.history.push("/dashboard");
+
+        } else {
+          console.log("Cannot fetch currently signed-in user!");
+          console.log("Signing out... please login again.");
+          this.handleLogout();
+        }
+      } catch(error) {
+        console.log("Error in authentication:", error);
+      }
+    });
+
+  };
+
   // sign-out functionality
   handleLogout() {
     logout().then(function () {
@@ -95,7 +118,14 @@ export default class HomePage extends React.Component {
     return (
       <React.Fragment>
         <Header
-          extras={this.state.num ? `Total ${this.state.num}+ Shares` : null}
+          extras={
+            <div>
+              {this.state.num ? `Total ${this.state.num}+ Shares` : null}
+              <button className="btn-coding margin-l-20 padding-0-14" onClick={this.handleLogout}>
+                Sign Out
+              </button>
+            </div>
+          }
         />
         <div className="homepage">
           <p className="title">
@@ -112,8 +142,8 @@ export default class HomePage extends React.Component {
             <button className="btn-home" onClick={this.onNewGround}>
               Share Code
             </button>
-            <button className="btn-home margin-l-15" onClick={this.handleLogout}>
-              &nbsp;&nbsp;Sign Out&nbsp;&nbsp;
+            <button className="btn-home margin-l-15" onClick={this.goToDashboard}>
+              &nbsp;Dashboard&nbsp;
             </button>
           </div>
         </div>
