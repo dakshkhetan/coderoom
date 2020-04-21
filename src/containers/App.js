@@ -7,6 +7,7 @@ import { createBrowserHistory } from "history";
 import Login from "./pages/Login";
 import Coding from "./pages/Coding";
 import Home from './pages/Home';
+import Dashboard from './pages/Dashboard';
 
 const muiTheme = getMuiTheme({
   appBar: {
@@ -26,6 +27,7 @@ class App extends Component {
         <div className="App">
           <Route path="/login" component={Login}/>
           <Route exact path="/" component={Home}/>
+          <Route exact path="/dashboard" component={Dashboard}/>
           <Route exact path="/home" component={Home}/>
           <Route exact path="/home/:sessionid" component={Coding}/>
         </div>
