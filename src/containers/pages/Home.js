@@ -54,6 +54,7 @@ export default class HomePage extends React.Component {
           .set({
             content: "<h1> I ♥ Coding! </h1>",
             createdon: Date(),
+            title: "Untitled",
             readOnly: false,  // by default 'false'
           });
 

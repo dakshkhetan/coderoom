@@ -52,19 +52,23 @@ export default class CodingPage extends React.Component {
           },
       };
 
-      // set 'readOnly' state from database
+      // set 'readOnly' state and session title from database
       database()
       .ref(`code-sessions/${session_id}`)
       .once("value")
       .then(snapshot => {
-        var readOnly = snapshot.val().readOnly;
+        let readOnly = snapshot.val().readOnly;
         this.setState({ readOnly: readOnly });
+        // setting session title in the header
+        let sessionTitle = snapshot.val().title;
+        this.sessionTitle.value = sessionTitle;
       })
       .catch(e => {
         // no session found corresponding to "sessionid" passed in the params
       });
 
       this.handleLogout = this.handleLogout.bind(this);
+      this.sessionTitleHandler = this.sessionTitleHandler.bind(this);
 
   }
 
@@ -172,6 +176,28 @@ export default class CodingPage extends React.Component {
               } else {
                 this.userEditingToggleBtn.innerHTML = "Editing: Enabled";
               }
+            }
+          });
+
+          // setting session-tile readOnly state
+          if(this.state.isCreator){
+            if(this.sessionTitle !== null && this.sessionTitle !== undefined){
+              this.sessionTitle.readOnly = false;
+            }
+          } else {
+            if(this.sessionTitle !== null && this.sessionTitle !== undefined){
+              this.sessionTitle.readOnly = true;
+            }
+          }
+
+          // updating the session title dynamically
+          database()
+          .ref(`code-sessions/${session_id}/title`)
+          .on('value', snapshot => {
+            // console.log("session-title modified!");
+            if(this.sessionTitle !== null && this.sessionTitle !== undefined){
+              let sessionTitle = snapshot.val();
+              this.sessionTitle.value = sessionTitle;
             }
           });
 
@@ -287,16 +313,12 @@ export default class CodingPage extends React.Component {
       // changing 'readOnly' state of editor
       this.codeRef = database().ref(`code-sessions/${session_id}`);
       this.codeRef.on("value", function(snapshot) {
-
         // setting 'readOnly' option
         if(self.state.isCreator){
-          // self.codemirror.getCodeMirror().setOption("readOnly", false);
           self.codemirror.setOption("readOnly", false);
         } else {
-          // self.codemirror.getCodeMirror().setOption("readOnly", snapshot.val().readOnly);
           self.codemirror.setOption("readOnly", snapshot.val().readOnly);
         }
-
       });
 
     })
@@ -347,6 +369,12 @@ export default class CodingPage extends React.Component {
     });
     // setting new language mode in the editor
     this.codemirror.setOption("mode", mode);
+  };
+  
+  // executes whenever session-title is changed
+  sessionTitleHandler = (e) => {
+		let sessionTitle = e.target.value;
+    this.codeRef.child("title").set(sessionTitle);
 	};
 
   render() {
@@ -390,6 +418,19 @@ export default class CodingPage extends React.Component {
 
         <Header
           style={{ background: "#1d1f27" }}
+          title={
+            <div>
+              <span className="session-title">
+                Title:
+              </span>
+              <input ref={r => (this.sessionTitle = r)} 
+                className="session-title-input" 
+                readOnly="true"
+                placeholder="Enter title..." 
+                defaultValue="Untitled"
+                onChange={this.sessionTitleHandler} />
+            </div>
+          }
           extras={
             <div>
 
