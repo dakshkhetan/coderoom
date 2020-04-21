@@ -325,6 +325,132 @@ p {
   );
 }
 
+/*** Dashboard ***/
+
+.dashboard {
+  font-family: "Roboto", sans-serif;
+  background-color: #fff;
+  color: #222;
+  height: calc(100vh - 80px);
+  padding: 0px 64px;  
+}
+
+.dashboard .sessions-title {
+  font-family: 'Montserrat', sans-serif;
+  color: #222;
+  font-size: 34px;
+  font-weight: 400;
+  margin: 0;
+  margin-bottom: 20px;
+  padding-top: 15px;
+}
+
+.dashboard .clones-title {
+  font-family: 'Montserrat', sans-serif;
+  color: #222;
+  font-size: 34px;
+  font-weight: 400;
+  margin: 0;
+  margin-bottom: 20px;
+  margin-top: 40px;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.aligncenter {
+  text-align: center;
+}
+
+.loading-text {
+  display: flex;
+  justify-content: center;
+  font-size: 18px;
+  font-family: monospace;
+  margin-top: 15px;
+}
+
+.view-clones-help-text {
+  display: flex;
+  justify-content: center;
+  font-size: 15px;
+  font-family: monospace;
+  margin-top: 15px;
+}
+
+table {
+  /* background-color: white; */
+  width: 80%;
+  text-align: center;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+table td, table th {
+  padding:7px;
+  text-align: center;
+}
+
+table th {
+  border-bottom: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+}
+
+.table-collection {
+  margin: auto;
+}
+
+.table-collection th {
+  border-bottom: 1px solid #b3b5b8;
+  border-top: none;
+  text-transform: uppercase;
+}
+
+table tr {
+  border-bottom: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+}
+
+.table-collection tr {
+  border-bottom: 1px solid #b3b5b8;
+  border-top: none;
+}
+
+.table-collection tbody tr:hover {
+  background-color: #f3f3f4;
+}
+
+.table-collection a {
+  color: #007bff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.table-collection a:hover {
+  text-decoration: none;
+}
+
+.table-collection .title-color {
+  color: #a70a19;
+  font-weight: 500;
+}
+
+.view-clone-btn {
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #007aff;
+}
+
+.view-clone-btn:hover {
+  background-color: #187deb;
+  color: #fff;
+}
+
+.view-clone-btn:focus {
+  outline: none;
+}
+
 /* Coding Page */
 
 .session-details {
