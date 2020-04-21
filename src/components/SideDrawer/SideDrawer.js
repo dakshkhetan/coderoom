@@ -337,13 +337,15 @@ export default class sideDrawer extends React.Component {
 
                 date = Date();
 
-                // fetching existing code in this session ID to be cloned
+                // fetching existing code and session-title in this session ID to be cloned
                 var existingContent;
+                var existingSessionTitle;
                 database()
                 .ref(`code-sessions/${session_id}`)
                 .once("value")
                 .then(snapshot => {
                   existingContent = snapshot.val().content;
+                  existingSessionTitle = snapshot.val().title;
                 })
                 .catch(e => {
                   console.log(e);
@@ -375,6 +377,7 @@ export default class sideDrawer extends React.Component {
                           content: existingContent,
                           createdon: date,
                           readOnly: false,
+                          title: existingSessionTitle,
                         });
 
                         // adding details of the user as creator to the database
@@ -421,14 +424,16 @@ export default class sideDrawer extends React.Component {
                       let cloneSentBy = childSnapshot.child("cloneSentBy").val();
                       let user_id = childSnapshot.child("creator").child("user_id").val();
                       let content = childSnapshot.child("content").val();
+                      let sessionTitle = childSnapshot.child("title").val();
                       let createdOn = childSnapshot.child("createdon").val();
                       let createdOnCompressed = createdOn.substring(0, 21);
 
                       // Comparing: content (code), user id (uid), 
-                      //    cloneSentBy (creator id), date (createOn)
+                      //    cloneSentBy (creator id), date (createOn) & session-title
                       if(cloneSentBy === creator_uid 
                         && user_id === user.uid
                         && content === existingContent
+                        && sessionTitle === existingSessionTitle
                         && createdOnCompressed === dateCompressed) {
                         
                         let cloneSessionID = childSnapshot.key;
@@ -493,13 +498,15 @@ export default class sideDrawer extends React.Component {
 
                 date = Date();
 
-                // fetching existing code in this session ID to be cloned
+                // fetching existing code and session-title in this session ID to be cloned
                 var existingContent;
+                var existingSessionTitle;
                 database()
                 .ref(`code-sessions/${session_id}`)
                 .once("value")
                 .then(snapshot => {
                   existingContent = snapshot.val().content;
+                  existingSessionTitle = snapshot.val().title;
                 })
                 .catch(e => {
                   console.log(e);
@@ -516,7 +523,6 @@ export default class sideDrawer extends React.Component {
 
                     snapshot.forEach(function(childSnapshot){
                       
-                      // console.log(existingContent);
                       let newSessionKey = random.generate(5);
                       let userData = childSnapshot.val();
 
@@ -529,6 +535,7 @@ export default class sideDrawer extends React.Component {
                         content: existingContent,
                         createdon: date,
                         readOnly: false,
+                        title: existingSessionTitle,
                       });
 
                       // adding details of the user as creator to the database
@@ -575,14 +582,16 @@ export default class sideDrawer extends React.Component {
                       let cloneSentBy = childSnapshot.child("cloneSentBy").val();
                       let user_id = childSnapshot.child("creator").child("user_id").val();
                       let content = childSnapshot.child("content").val();
+                      let sessionTitle = childSnapshot.child("title").val();
                       let createdOn = childSnapshot.child("createdon").val();
                       let createdOnCompressed = createdOn.substring(0, 21);
 
                       // Comparing: content (code), user id (uid), 
-                      //    cloneSentBy (creator id), date (createOn)
+                      //    cloneSentBy (creator id), date (createOn) & session-title
                       if(cloneSentBy === creator_uid 
                         && user_id === user.uid
                         && content === existingContent
+                        && sessionTitle === existingSessionTitle
                         && createdOnCompressed === dateCompressed) {
                         
                         let cloneSessionID = childSnapshot.key;

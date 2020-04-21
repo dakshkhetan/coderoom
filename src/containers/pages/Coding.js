@@ -425,7 +425,7 @@ export default class CodingPage extends React.Component {
               </span>
               <input ref={r => (this.sessionTitle = r)} 
                 className="session-title-input" 
-                readOnly="true"
+                readOnly={true}
                 placeholder="Enter title..." 
                 defaultValue="Untitled"
                 onChange={this.sessionTitleHandler} />
