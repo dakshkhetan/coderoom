@@ -19,6 +19,15 @@ export default class CodingPage extends React.Component {
   constructor(props) {
       super(props);
 
+      // favicon script
+      (function() {
+        var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+        link.type = 'image/x-icon';
+        link.rel = 'shortcut icon';
+        link.href = '../favicon_CN.ico';
+        document.getElementsByTagName('head')[0].appendChild(link);
+      })();
+
       const session_id = this.props.match.params.sessionid;
 
       // if appTokenKey is not found in localStorage,
