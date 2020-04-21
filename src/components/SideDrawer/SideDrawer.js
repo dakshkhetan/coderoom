@@ -770,7 +770,7 @@ export default class sideDrawer extends React.Component {
         { sendCloneButton }
 
         <span className="heading">
-            Connected Users:
+            Connected Users: {clonesCreated.numOfClonesCreated}
         </span>
 
         { clonePopUp }
