@@ -9,6 +9,11 @@
   width: auto;
 }
 
+.logo-header {
+  height: 40px;
+  padding-bottom: 3px;
+}
+
 .App-header {
   background-color: #000000;
   height: 80px;
@@ -34,6 +39,44 @@
 .App-title:active, .App-title:hover {
   color: #fff;
   text-decoration: none;
+}
+
+.session-title-input {
+  height: 30px;
+  width: 15rem;
+  margin-left: 5px;
+  padding: 5px;
+  background-color: #1d1f27;
+  color: #fff;
+  font-size: 19px;
+  border: 1px solid #1d1f27;
+  border-radius: 6px;
+}
+
+.session-title-input:focus {
+  outline: none;
+}
+
+.session-title-input:hover {
+  background-color: #222;
+  color: #fff;
+  border: 1px solid #ffffff6e;
+  border-radius: 6px;
+}
+
+.session-title {
+  margin-left: 50px;
+  color: #ffffffd6;
+  font-size: 17px;
+  text-decoration: none;
+}
+
+.session-title .session-title-name {
+  margin-left: 50px;
+  color: #fff;
+  font-size: 18px;
+  text-decoration: none;
+  border-bottom: 1px solid #fff;
 }
 
 .homepage {
