@@ -392,31 +392,46 @@ export default class CodingPage extends React.Component {
           style={{ background: "#1d1f27" }}
           extras={
             <div>
-              {this.state.createdon
-                ? `Created On: ${this.state.createdon}`
-                : ""}
 
-              <select className="btn-coding margin-l-10 mode-dropdown" 
-                onChange={this.changeMode} 
-                value={this.state.mode} >
-                <option value="xml">Markdown</option>
-                <option value="javascript">JavaScript</option>
-                <option value="text/x-csrc">C</option>
-                <option value="text/x-c++src">C++</option>
-                <option value="text/x-java">Java</option>
-                <option value="python">Python</option>
-              </select>
+              <span className="session-details">
+                <span>
+                  {this.state.createdon
+                    ? `Created On: ${this.state.createdon}`
+                    : ""}
+                </span>
+                <span>
+                  {this.state.createdon
+                  ? `Created By: ${creatorInfo.user_name}`
+                  : ""}
+                </span>
+              </span>
 
-              { readOnlyToggle }
-              { userEditingToggle }
+              <span className="header-menu">
 
-              <button className="btn-coding margin-l-10" onClick={this.handleLogout}>
-                Sign Out
-              </button>
+                <select className="btn-coding margin-l-10 mode-dropdown" 
+                  onChange={this.changeMode} 
+                  value={this.state.mode} >
+                  <option value="xml">Markdown</option>
+                  <option value="javascript">JavaScript</option>
+                  <option value="text/x-csrc">C</option>
+                  <option value="text/x-c++src">C++</option>
+                  <option value="text/x-java">Java</option>
+                  <option value="python">Python</option>
+                </select>
+
+                { readOnlyToggle }
+                { userEditingToggle }
+
+                <button className="btn-coding margin-l-10" onClick={this.handleLogout}>
+                  Sign Out
+                </button>
+                
+                <button className="btn-coding margin-l-10" onClick={this.drawerToggleClickHandler}>
+                  <FontAwesomeIcon icon={faBars} />
+                </button>
+
+              </span>
               
-              <button className="btn-coding margin-l-10" onClick={this.drawerToggleClickHandler}>
-                <FontAwesomeIcon icon={faBars} />
-              </button>
             </div>
           }
         />
