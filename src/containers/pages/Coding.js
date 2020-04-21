@@ -61,7 +61,11 @@ export default class CodingPage extends React.Component {
         this.setState({ readOnly: readOnly });
         // setting session title in the header
         let sessionTitle = snapshot.val().title;
-        this.sessionTitle.value = sessionTitle;
+        if(sessionTitle === undefined || sessionTitle === ""){
+          this.sessionTitle.value = "Untitled";
+        } else {
+          this.sessionTitle.value = sessionTitle;
+        }
       })
       .catch(e => {
         // no session found corresponding to "sessionid" passed in the params
@@ -176,6 +180,14 @@ export default class CodingPage extends React.Component {
               } else {
                 this.userEditingToggleBtn.innerHTML = "Editing: Enabled";
               }
+            }
+          });
+
+          // prevent space as input in session-title
+          this.sessionTitle.addEventListener('keypress', function(event) {  
+            let key = event.keyCode;
+            if (key === 32) {
+              event.preventDefault();
             }
           });
 
@@ -425,9 +437,12 @@ export default class CodingPage extends React.Component {
               </span>
               <input ref={r => (this.sessionTitle = r)} 
                 className="session-title-input" 
+                type="text"
                 readOnly={true}
                 placeholder="Enter title..." 
                 defaultValue="Untitled"
+                minLength="1"
+                maxLength="30"
                 onChange={this.sessionTitleHandler} />
             </div>
           }
