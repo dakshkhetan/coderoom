@@ -1,5 +1,5 @@
 .App {
-  font-family: "Nunito", sans-serif;
+  font-family: "Poppins", sans-serif;
   background-color: #000000;
   color: #fff;
 }
@@ -232,6 +232,14 @@ p {
 
 /**** Quick Access Classes ****/
 
+.padding-0-14 {
+  padding: 0 14px;
+}
+
+.margin-l-20 {
+  margin-left: 20px;
+}
+
 .margin-l-15 {
   margin-left: 15px;
 }
@@ -252,7 +260,8 @@ p {
 }
 
 .toggle-btn {
-  vertical-align: bottom;
+  /* vertical-align: bottom; */
+  vertical-align: middle;
   font-size: 1.4rem;
 }
 
@@ -271,4 +280,15 @@ p {
       transparent 160px,
       rgba(0, 0, 0, 0.85) 200px
   );
+}
+
+/* Coding Page */
+
+.session-details {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.header-menu {
+  vertical-align: text-top;
 }
