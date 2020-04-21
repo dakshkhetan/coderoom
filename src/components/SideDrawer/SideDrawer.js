@@ -160,7 +160,7 @@ export default class sideDrawer extends React.Component {
           .ref(`code-sessions/${session_id}/users-connected`)
           .on('value', snapshot => {
             clonesCreated.numOfClonesCreated = snapshot.numChildren();
-            console.log("\nConnected users: ");
+            console.log(`\nConnected users: ${snapshot.numChildren()}`);
             usersList.splice(0, usersList.length);
             var i = 0;
             
@@ -291,14 +291,14 @@ export default class sideDrawer extends React.Component {
                       });
                     }
     
-                    // setting state of 'clonePopupShow' to false in database
-                    // after delay of 500 milliseconds
-                    function clonePopupShowStateDelay(){
-                      database()
-                      .ref(`code-sessions/${session_id}/singleCloneHelper/clonePopupShow`)
-                      .set(false);
-                    }
-                    setTimeout(clonePopupShowStateDelay, 500);
+                    // // setting state of 'clonePopupShow' to false in database
+                    // // after delay of 500 milliseconds
+                    // function clonePopupShowStateDelay(){
+                    //   database()
+                    //   .ref(`code-sessions/${session_id}/singleCloneHelper/clonePopupShow`)
+                    //   .set(false);
+                    // }
+                    // setTimeout(clonePopupShowStateDelay, 500);
     
                   }
 
@@ -371,6 +371,7 @@ export default class sideDrawer extends React.Component {
                         .ref("code-sessions/" + newSessionKey)
                         .set({
                           cloneSentBy: creator_uid,
+                          clonedFromSession: session_id,
                           content: existingContent,
                           createdon: date,
                           readOnly: false,
@@ -524,6 +525,7 @@ export default class sideDrawer extends React.Component {
                       .ref("code-sessions/" + newSessionKey)
                       .set({
                         cloneSentBy: creator_uid,
+                        clonedFromSession: session_id,
                         content: existingContent,
                         createdon: date,
                         readOnly: false,
@@ -656,6 +658,16 @@ export default class sideDrawer extends React.Component {
     // updating 'cloneTrigger' value and 'clonePopupShow' state in database
     // indicating 'send-clone' button is clicked
     this.codeRef.child("singleCloneHelper").child("cloneTrigger").set(newCloneTrigger);
+
+    const session_id = this.props.session_id;
+    // setting state of 'clonePopupShow' to false in database
+    // after delay of 500 milliseconds
+    function clonePopupShowStateDelay(){
+      database()
+      .ref(`code-sessions/${session_id}/singleCloneHelper/clonePopupShow`)
+      .set(false);
+    }
+    setTimeout(clonePopupShowStateDelay, 800);
 
   };
 
