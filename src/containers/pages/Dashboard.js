@@ -215,8 +215,6 @@ export default class Dashboard extends React.Component {
 
   render() {
 
-    // console.log("render() called!");
-
     let loadingTextUserSession;
     if(this.state.isLoadingUserSession){
       loadingTextUserSession = <span className="loading-text">Loading...</span>;

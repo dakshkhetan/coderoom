@@ -233,7 +233,7 @@ p {
   font-weight: bold;
 }
 
-/**** Spinning Logo ****/
+/**** Login Page Spinning Icon ****/
 
 .lds-ring {
   display: inline-block;
@@ -273,26 +273,46 @@ p {
   }
 }
 
-/**** Quick Access Classes ****/
+/**** Coding Page Spinning Icon ****/
 
-.padding-0-14 {
-  padding: 0 14px;
-}
-
-.margin-l-20 {
-  margin-left: 20px;
-}
-
-.margin-l-15 {
-  margin-left: 15px;
-}
-
-.margin-l-10 {
-  margin-left: 10px;
-}
-
-.text-center {
+.lds-ring-coding {
+  display: inline-block;
+  width: 90px;
+  height: 90px;
+  position: absolute;
+  top: 40vh;
+  left: 46.5%;
+  z-index: 50;
   text-align: center;
+}
+.lds-ring-coding div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  margin: 8px;
+  border: 8px solid #fff;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #fff transparent transparent transparent;
+}
+.lds-ring-coding div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring-coding div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring-coding div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring-coding {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /**** Extra ****/
@@ -460,4 +480,26 @@ table tr {
 
 .header-menu {
   vertical-align: text-top;
+}
+
+/**** Quick Access Classes ****/
+
+.padding-0-14 {
+  padding: 0 14px;
+}
+
+.margin-l-20 {
+  margin-left: 20px;
+}
+
+.margin-l-15 {
+  margin-left: 15px;
+}
+
+.margin-l-10 {
+  margin-left: 10px;
+}
+
+.text-center {
+  text-align: center;
 }

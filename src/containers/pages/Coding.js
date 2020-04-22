@@ -41,15 +41,12 @@ export default class CodingPage extends React.Component {
       // setting initial state
       this.state = {
           key: random.generate(3), // for storing connected-users
+          isLoading: true,
           readOnly: false,
           isCreator: false,
           sideDrawerOpen: false,
           mode: 'xml',
           code: "Loading...",
-          cursorPosition: {
-            line: 0,
-            ch: 0
-          },
       };
 
       // set 'readOnly' state and session title from database
@@ -299,11 +296,8 @@ export default class CodingPage extends React.Component {
         createdon: createdOnCompressed 
       });
 
-      /**** TODO: ****/
-      // this.codemirror.setValue("Loading...");
-      // this.codemirror.setValue("");
-
       this.firepad.on('ready', function() {
+        self.setState({isLoading: false});
         if (self.firepad.isHistoryEmpty()) {
             self.firepad.setText(self.state.code);
         }
@@ -337,6 +331,8 @@ export default class CodingPage extends React.Component {
     .catch(e => {
       // no session found corresponding to "sessionid" passed in the params
       this.firepad.dispose();
+      this.setState({isLoading: false});
+      this.sessionTitle.value = " ";
       self.codemirror.setValue("No Session Found!");
     });
 
@@ -425,6 +421,13 @@ export default class CodingPage extends React.Component {
         </button>
     }
 
+    // spinning loading icon
+    let spinningLogo;
+    if (this.state.isLoading) {
+      spinningLogo = 
+        <div className="lds-ring-coding"><div></div><div></div><div></div><div></div></div> 
+    }
+
     return (
       <React.Fragment>
 
@@ -491,6 +494,8 @@ export default class CodingPage extends React.Component {
             </div>
           }
         />
+
+        { spinningLogo }
 
         <SideDrawer show={this.state.sideDrawerOpen} session_id={this.props.match.params.sessionid} />
         { backdrop }
