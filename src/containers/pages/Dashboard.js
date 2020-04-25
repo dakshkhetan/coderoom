@@ -20,6 +20,7 @@ export default class Dashboard extends React.Component {
       isLoadingUserSession: true,
       viewClonesHelpText: false,
       isLoadingSessionClones: false,
+      noSessionFoundText: false,
       noCloneFoundText: false,
     };
 
@@ -57,6 +58,7 @@ export default class Dashboard extends React.Component {
           .then(snapshot => {
             // console.log("Searching for all sessions created by current user...");
             userSessionsList.splice(0, userSessionsList.length);
+            let found = false;
             let self = this;
             let i = 0;
 
@@ -73,6 +75,8 @@ export default class Dashboard extends React.Component {
                   isLoadingUserSession: false,
                   viewClonesHelpText: true,
                 });
+
+                found = true;
 
                 let sessionid = childSnapshot.key;
                 // console.log(`User session id: ${sessionid}`);
@@ -108,6 +112,15 @@ export default class Dashboard extends React.Component {
 
               }
             });
+
+            if(!found){
+              this.setState({
+                isLoadingUserSession: false,
+                noSessionFoundText: true,
+              });
+              // console.log("No clones found!");
+            }
+
             // this.setState(this.state);
           });
 
@@ -238,6 +251,12 @@ export default class Dashboard extends React.Component {
       <span className="view-clones-help-text">No Clones Found!</span>;
     }
 
+    let noSessionFoundText;
+    if(this.state.noSessionFoundText){
+      noSessionFoundText = 
+      <span className="view-clones-help-text">No Sessions Found!</span>;
+    }
+
     let usersSessionHeading;
     let usersCloneHeading;
     if(userDisplayName.name !== undefined){
@@ -277,6 +296,7 @@ export default class Dashboard extends React.Component {
             </tbody>
           </table>
           { loadingTextUserSession }
+          { noSessionFoundText }
           <p className="clones-title">
             { usersCloneHeading }
           </p>

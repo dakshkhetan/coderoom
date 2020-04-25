@@ -157,6 +157,10 @@ p {
   color: black;
 }
 
+.btn-home:focus {
+  outline: none;
+}
+
 .btn-coding {
   display: inline-block;
   margin-bottom: 0;
