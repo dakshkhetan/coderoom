@@ -36,7 +36,8 @@
   border-bottom: 1px dashed #5ce198;
 }
 
-.App-title:active, .App-title:hover {
+.App-title:active,
+.App-title:hover {
   color: #fff;
   text-decoration: none;
 }
@@ -155,6 +156,10 @@ p {
 .btn-home:hover {
   background: #5ce198;
   color: black;
+}
+
+.btn-home:focus {
+  outline: none;
 }
 
 .btn-coding {
@@ -339,9 +344,9 @@ p {
   height: 100%;
   width: 100%;
   background-image: radial-gradient(
-      circle,
-      transparent 160px,
-      rgba(0, 0, 0, 0.85) 200px
+    circle,
+    transparent 160px,
+    rgba(0, 0, 0, 0.85) 200px
   );
 }
 
@@ -352,11 +357,11 @@ p {
   background-color: #fff;
   color: #222;
   height: calc(100vh - 80px);
-  padding: 0px 64px;  
+  padding: 0px 64px;
 }
 
 .dashboard .sessions-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   color: #222;
   font-size: 34px;
   font-weight: 400;
@@ -366,7 +371,7 @@ p {
 }
 
 .dashboard .clones-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   color: #222;
   font-size: 34px;
   font-weight: 400;
@@ -407,8 +412,9 @@ table {
   border-spacing: 0;
 }
 
-table td, table th {
-  padding:7px;
+table td,
+table th {
+  padding: 7px;
   text-align: center;
 }
 

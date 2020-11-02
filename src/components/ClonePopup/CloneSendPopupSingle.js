@@ -1,40 +1,33 @@
-import React, { Component } from 'react';
-import { Modal, Button } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './CloneSendPopup.css';
+import React, { Component } from "react";
+import { Modal, Button } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./CloneSendPopup.css";
 
-export default class CloneSendPopupSingle extends Component {    
+export default class CloneSendPopupSingle extends Component {
+  render() {
+    return (
+      <Modal
+        {...this.props}
+        size="sm"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Clone sent!
+          </Modal.Title>
+        </Modal.Header>
 
-    render(){
+        <Modal.Body>
+          <div className="popup-heading">Created 1 clone.</div>
+        </Modal.Body>
 
-        return (
-            <Modal
-            {...this.props}
-            size="sm"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-            >
-
-                <Modal.Header closeButton>
-                    <Modal.Title id="contained-modal-title-vcenter">
-                        Clone sent!
-                    </Modal.Title>
-                </Modal.Header>
-
-                <Modal.Body>
-                    <div className="popup-heading" >
-                        Created 1 clone.
-                    </div>
-                </Modal.Body>
-                
-                <Modal.Footer>
-                    <Button variant="danger" onClick={this.props.onHide}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-
-            </Modal>
-        );
-    }
-
+        <Modal.Footer>
+          <Button variant="danger" onClick={this.props.onHide}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
 }

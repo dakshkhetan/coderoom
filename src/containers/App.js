@@ -6,32 +6,31 @@ import getMuiTheme from "material-ui/styles/getMuiTheme";
 import { createBrowserHistory } from "history";
 import Login from "./pages/Login";
 import Coding from "./pages/Coding";
-import Home from './pages/Home';
-import Dashboard from './pages/Dashboard';
+import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 
 const muiTheme = getMuiTheme({
   appBar: {
-      color: "#37517E",
-      height: 50
+    color: "#37517E",
+    height: 50,
   },
 });
 
 const customHistory = createBrowserHistory();
 
 class App extends Component {
-  
   render() {
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
-      <Router history={customHistory}>
-        <div className="App">
-          <Route path="/login" component={Login}/>
-          <Route exact path="/" component={Home}/>
-          <Route exact path="/dashboard" component={Dashboard}/>
-          <Route exact path="/home" component={Home}/>
-          <Route exact path="/home/:sessionid" component={Coding}/>
-        </div>
-      </Router>
+        <Router history={customHistory}>
+          <div className="App">
+            <Route path="/login" component={Login} />
+            <Route exact path="/" component={Home} />
+            <Route exact path="/dashboard" component={Dashboard} />
+            <Route exact path="/home" component={Home} />
+            <Route exact path="/home/:sessionid" component={Coding} />
+          </div>
+        </Router>
       </MuiThemeProvider>
     );
   }

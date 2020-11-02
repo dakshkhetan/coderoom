@@ -11,7 +11,6 @@ const sessionClonesList = [];
 const userDisplayName = {};
 
 export default class Dashboard extends React.Component {
-
   constructor(props) {
     super(props);
 
@@ -20,16 +19,17 @@ export default class Dashboard extends React.Component {
       isLoadingUserSession: true,
       viewClonesHelpText: false,
       isLoadingSessionClones: false,
+      noSessionFoundText: false,
       noCloneFoundText: false,
     };
 
-    if (localStorage.getItem(sessionID)){
+    if (localStorage.getItem(sessionID)) {
       localStorage.removeItem(sessionID);
     }
 
     if (!localStorage.getItem(appTokenKey)) {
-        this.props.history.push(`/login`);
-        return;
+      this.props.history.push(`/login`);
+      return;
     }
 
     this.handleLogout = this.handleLogout.bind(this);
@@ -37,12 +37,10 @@ export default class Dashboard extends React.Component {
   }
 
   componentDidMount = () => {
-
     // to fetch currently signed-in user
-    firebaseAuth().onAuthStateChanged(user => {
+    firebaseAuth().onAuthStateChanged((user) => {
       try {
         if (user) {
-
           // storing current user's name
           userDisplayName.name = user.displayName;
 
@@ -52,87 +50,105 @@ export default class Dashboard extends React.Component {
           // database().ref(`/${session_id}/creator`).orderByChild("user_id").equalTo(user.uid).on('value', function (snapshot) {});
 
           database()
-          .ref(`code-sessions/`)
-          .once("value")
-          .then(snapshot => {
-            // console.log("Searching for all sessions created by current user...");
-            userSessionsList.splice(0, userSessionsList.length);
-            let self = this;
-            let i = 0;
+            .ref(`code-sessions/`)
+            .once("value")
+            .then((snapshot) => {
+              // console.log("Searching for all sessions created by current user...");
+              userSessionsList.splice(0, userSessionsList.length);
+              let found = false;
+              let self = this;
+              let i = 0;
 
-            snapshot.forEach(function(childSnapshot){
+              snapshot.forEach(function (childSnapshot) {
+                let creator_id = childSnapshot
+                  .child("creator")
+                  .child("user_id")
+                  .val();
+                let sessionsTitle = childSnapshot.child("title").val();
+                let createdOn = childSnapshot.child("createdon").val();
+                let createdOnCompressed = createdOn.substring(0, 24);
 
-              let creator_id = childSnapshot.child("creator").child("user_id").val();
-              let sessionsTitle = childSnapshot.child("title").val();
-              let createdOn = childSnapshot.child("createdon").val();
-              let createdOnCompressed = createdOn.substring(0, 24);
+                if (creator_id === user.uid) {
+                  self.setState({
+                    isLoadingUserSession: false,
+                    viewClonesHelpText: true,
+                  });
 
-              if(creator_id === user.uid) {
+                  found = true;
 
-                self.setState({
-                  isLoadingUserSession: false,
-                  viewClonesHelpText: true,
-                });
+                  let sessionid = childSnapshot.key;
+                  // console.log(`User session id: ${sessionid}`);
 
-                let sessionid = childSnapshot.key;
-                // console.log(`User session id: ${sessionid}`);
-
-                userSessionsList.push(
-                  <tr key={i}>
-                    <td>
-                      <a href={`/home/${sessionid}`} target='_blank' rel="noopener noreferrer">
-                        {sessionid}
-                      </a>
-                    </td>
-                    <td>
-                      <a className="title-color" 
-                        href={`/home/${sessionid}`} 
-                        target='_blank' rel="noopener noreferrer">
-                          { sessionsTitle }
-                      </a>
-                    </td>
-                    <td>{ createdOnCompressed }</td>
-                    <td>
-                      <button 
-                        className="view-clone-btn"
-                        value={sessionid}
-                        onClick={self.viewClonesHandler}>
+                  userSessionsList.push(
+                    <tr key={i}>
+                      <td>
+                        <a
+                          href={`/home/${sessionid}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {sessionid}
+                        </a>
+                      </td>
+                      <td>
+                        <a
+                          className="title-color"
+                          href={`/home/${sessionid}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {sessionsTitle}
+                        </a>
+                      </td>
+                      <td>{createdOnCompressed}</td>
+                      <td>
+                        <button
+                          className="view-clone-btn"
+                          value={sessionid}
+                          onClick={self.viewClonesHandler}
+                        >
                           View Clones
-                      </button>
-                    </td>
-                  </tr>
-                );
-                i++;
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                  i++;
 
-                self.setState(self.state);
+                  self.setState(self.state);
+                }
+              });
 
+              if (!found) {
+                this.setState({
+                  isLoadingUserSession: false,
+                  noSessionFoundText: true,
+                });
+                // console.log("No clones found!");
               }
+
+              // this.setState(this.state);
             });
-            // this.setState(this.state);
-          });
-
         } else {
-
           console.log("Cannot fetch currently signed-in user!");
           console.log("Signing out... please login again.");
           if (localStorage.getItem(appTokenKey)) {
             // localStorage.setItem("sessionID", session_id);
-            logout().then(function () {
-              localStorage.removeItem(appTokenKey);
-              this.props.history.push("/login");
-            }.bind(this));
+            logout().then(
+              function () {
+                localStorage.removeItem(appTokenKey);
+                this.props.history.push("/login");
+              }.bind(this)
+            );
             return;
           }
-
         }
-      } catch(error) {
+      } catch (error) {
         console.log("Error in authentication:", error);
       }
     });
-  }
+  };
 
   viewClonesHandler = (e) => {
-
     this.setState({
       viewClonesHelpText: false,
       isLoadingSessionClones: true,
@@ -145,102 +161,123 @@ export default class Dashboard extends React.Component {
     // console.log(`correspondingSessionID: ${correspondingSessionID}`);
 
     database()
-    .ref(`code-sessions/`)
-    .once("value")
-    .then(snapshot => {
+      .ref(`code-sessions/`)
+      .once("value")
+      .then((snapshot) => {
+        // sessionClonesList.splice(0, sessionClonesList.length);
+        let found = false;
+        let self = this;
+        let i = 0;
 
-      // sessionClonesList.splice(0, sessionClonesList.length);
-      let found = false;
-      let self = this;
-      let i = 0;
+        snapshot.forEach(function (childSnapshot) {
+          let clonedFromSessionID = childSnapshot
+            .child("clonedFromSession")
+            .val();
+          let userName = childSnapshot
+            .child("creator")
+            .child("user_name")
+            .val();
+          let userEmail = childSnapshot
+            .child("creator")
+            .child("user_email")
+            .val();
+          let createdOn = childSnapshot.child("createdon").val();
+          let createdOnCompressed = createdOn.substring(0, 24);
 
-      snapshot.forEach(function(childSnapshot){
+          if (clonedFromSessionID === correspondingSessionID) {
+            self.setState({ isLoadingSessionClones: false });
+            found = true;
+            let cloneSesssionID = childSnapshot.key;
+            // console.log(`cloneSesssionID: ${cloneSesssionID}`);
 
-        let clonedFromSessionID = childSnapshot.child("clonedFromSession").val();
-        let userName = childSnapshot.child("creator").child("user_name").val();
-        let userEmail = childSnapshot.child("creator").child("user_email").val();
-        let createdOn = childSnapshot.child("createdon").val();
-        let createdOnCompressed = createdOn.substring(0, 24);
-
-        if(clonedFromSessionID === correspondingSessionID) {
-          self.setState({isLoadingSessionClones: false});
-          found = true;
-          let cloneSesssionID = childSnapshot.key;
-          // console.log(`cloneSesssionID: ${cloneSesssionID}`);
-
-          sessionClonesList.push(
-            <tr key={i}>
-              <td>
-                <a href={`/home/${cloneSesssionID}`} 
-                  target='_blank' rel="noopener noreferrer">
+            sessionClonesList.push(
+              <tr key={i}>
+                <td>
+                  <a
+                    href={`/home/${cloneSesssionID}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     {cloneSesssionID}
-                </a>
-              </td>
-              <td>
-                <span className="title-color">{ userName }</span>
-              </td>
-              <td>{ userEmail }</td>
-              <td>{ createdOnCompressed }</td>
-            </tr>
-          );
-          i++;
+                  </a>
+                </td>
+                <td>
+                  <span className="title-color">{userName}</span>
+                </td>
+                <td>{userEmail}</td>
+                <td>{createdOnCompressed}</td>
+              </tr>
+            );
+            i++;
 
-          self.setState(self.state);
+            self.setState(self.state);
+          }
+        });
+
+        if (!found) {
+          this.setState({
+            isLoadingSessionClones: false,
+            noCloneFoundText: true,
+          });
+          // console.log("No clones found!");
         }
 
+        this.setState(this.state);
       });
-
-      if(!found){
-        this.setState({
-          isLoadingSessionClones: false,
-          noCloneFoundText: true,
-        });
-        // console.log("No clones found!");
-      }
-
-      this.setState(this.state);
-
-    });
   };
 
   // sign-out functionality
   handleLogout() {
-    logout().then(function () {
+    logout().then(
+      function () {
         localStorage.removeItem(appTokenKey);
         localStorage.removeItem(sessionID);
         this.props.history.push("/login");
         console.log("User signed-out from firebase.");
-    }.bind(this));
+      }.bind(this)
+    );
   }
 
   render() {
-
     let loadingTextUserSession;
-    if(this.state.isLoadingUserSession){
+    if (this.state.isLoadingUserSession) {
       loadingTextUserSession = <span className="loading-text">Loading...</span>;
     }
 
     let loadingTextSessionClones;
-    if(this.state.isLoadingSessionClones){
-      loadingTextSessionClones = <span className="loading-text">Loading...</span>;
+    if (this.state.isLoadingSessionClones) {
+      loadingTextSessionClones = (
+        <span className="loading-text">Loading...</span>
+      );
     }
 
     let viewClonesHelpText;
-    if(!this.state.isLoadingUserSession && this.state.viewClonesHelpText){
-      viewClonesHelpText = 
-      <span className="view-clones-help-text">(Click on the 'View Clones' button 
-        corresponding to a session ID above)</span>;
+    if (!this.state.isLoadingUserSession && this.state.viewClonesHelpText) {
+      viewClonesHelpText = (
+        <span className="view-clones-help-text">
+          (Click on the 'View Clones' button corresponding to a session ID
+          above)
+        </span>
+      );
     }
 
     let noCloneFoundText;
-    if(this.state.noCloneFoundText){
-      noCloneFoundText = 
-      <span className="view-clones-help-text">No Clones Found!</span>;
+    if (this.state.noCloneFoundText) {
+      noCloneFoundText = (
+        <span className="view-clones-help-text">No Clones Found!</span>
+      );
+    }
+
+    let noSessionFoundText;
+    if (this.state.noSessionFoundText) {
+      noSessionFoundText = (
+        <span className="view-clones-help-text">No Sessions Found!</span>
+      );
     }
 
     let usersSessionHeading;
     let usersCloneHeading;
-    if(userDisplayName.name !== undefined){
+    if (userDisplayName.name !== undefined) {
       let name = userDisplayName.name;
       usersSessionHeading = name + "'s sessions";
       usersCloneHeading = "Session clones";
@@ -253,16 +290,17 @@ export default class Dashboard extends React.Component {
           extras={
             <div>
               Dashboard
-              <button className="btn-coding margin-l-20 padding-0-14" onClick={this.handleLogout}>
+              <button
+                className="btn-coding margin-l-20 padding-0-14"
+                onClick={this.handleLogout}
+              >
                 Sign Out
               </button>
             </div>
           }
         />
         <div className="dashboard">
-          <p className="sessions-title">
-            { usersSessionHeading }
-          </p>
+          <p className="sessions-title">{usersSessionHeading}</p>
           <table className="table-collection">
             <thead>
               <tr>
@@ -272,14 +310,11 @@ export default class Dashboard extends React.Component {
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>
-              { userSessionsList }
-            </tbody>
+            <tbody>{userSessionsList}</tbody>
           </table>
-          { loadingTextUserSession }
-          <p className="clones-title">
-            { usersCloneHeading }
-          </p>
+          {loadingTextUserSession}
+          {noSessionFoundText}
+          <p className="clones-title">{usersCloneHeading}</p>
           <table className="table-collection">
             <thead>
               <tr>
@@ -289,16 +324,13 @@ export default class Dashboard extends React.Component {
                 <th>Created On</th>
               </tr>
             </thead>
-            <tbody>
-              { sessionClonesList }
-            </tbody>
+            <tbody>{sessionClonesList}</tbody>
           </table>
-          { viewClonesHelpText }
-          { loadingTextSessionClones }
-          { noCloneFoundText }
+          {viewClonesHelpText}
+          {loadingTextSessionClones}
+          {noCloneFoundText}
         </div>
       </React.Fragment>
     );
   }
-  
 }
