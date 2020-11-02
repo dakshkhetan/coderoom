@@ -164,7 +164,7 @@
 }
 
 .red-dot {
-  background-color: #F44336;
+  background-color: #f44336;
   height: 10px;
   width: 10px;
   display: flex;
@@ -185,7 +185,7 @@
 }
 
 .red-dot-creator {
-  background-color: #F44336;
+  background-color: #f44336;
   height: 10px;
   width: 10px;
   display: flex;
